@@ -1,1 +1,716 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>아키야마 미즈키</title>
+  <style>
+    :root {
+      --bg: linear-gradient(135deg, #fff5fb 0%, #ffe4f0 35%, #ffd8ef 70%, #ffeaf7 100%);
+      --card: rgba(255, 255, 255, 0.78);
+      --card-strong: rgba(255, 255, 255, 0.92);
+      --border: rgba(255, 130, 190, 0.24);
+      --text: #4b2457;
+      --muted: #6c5478;
+      --accent: #ff7ab6;
+      --accent-2: #ffb8de;
+      --shadow: 0 18px 40px rgba(245, 171, 212, 0.28);
+    }
 
+    * { box-sizing: border-box; }
+    
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(255, 182, 221, 0.45), transparent 24%),
+        radial-gradient(circle at right, rgba(255, 214, 239, 0.55), transparent 18%),
+        var(--bg);
+      background-attachment: fixed;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.18;
+      z-index: -1;
+      pointer-events: none;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+
+    body::before { top: -60px; left: -70px; background: #ff9bc5; }
+    body::after { bottom: -70px; right: -70px; background: #ffc1e2; animation-duration: 16s; }
+
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0) scale(1); }
+      to { transform: translate3d(18px, -30px, 0) scale(1.08); }
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 18px 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(255, 237, 247, 0.88));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+      position: relative;
+      transform: translateY(18px);
+      opacity: 0;
+      animation: revealUp 900ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.08) 35%, transparent 65%);
+      transform: translateX(-100%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 220ms ease;
+    }
+
+    .panel:hover::after { opacity: 1; animation: shimmer 1s ease; }
+
+    .intro {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      width: fit-content;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 183, 221, 0.30);
+      color: #8a4c78;
+      font-size: 0.92rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 12px 0 8px;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      line-height: 1.05;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .chip {
+      background: rgba(255, 214, 239, 0.65);
+      border: 1px solid rgba(255, 161, 210, 0.45);
+      color: #7a4c73;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.95rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(148, 163, 184, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .stat strong { display: block; font-size: 1.2rem; margin-bottom: 4px; }
+    .stat span { color: var(--muted); font-size: 0.92rem; }
+
+    .photo-main {
+      position: relative;
+      min-height: 320px;
+      overflow: hidden;
+      animation-delay: 120ms;
+    }
+
+    .photo-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 500ms ease, filter 500ms ease;
+      will-change: transform;
+    }
+
+    .photo-main:hover img {
+      transform: scale(1.03);
+      filter: saturate(1.08) contrast(1.02);
+    }
+
+    .photo-main::before {
+      content: "";
+      position: absolute;
+      inset: -20% -10%;
+      background: radial-gradient(circle at top, rgba(244, 114, 182, 0.18), transparent 28%);
+      animation: pulseGlow 4s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .photo-tag {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(255, 182, 221, 0.35);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      color: #6b3d61;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 240, 248, 0.96));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+      transform: perspective(900px) rotateX(0) rotateY(0);
+      transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: revealUp 900ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.08) 25%, transparent 45%);
+      transform: translateX(-120%);
+      pointer-events: none;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 144, 196, 0.55);
+      box-shadow: 0 18px 40px rgba(255, 184, 221, 0.26);
+      cursor: pointer;
+      transform: translateY(-6px) scale(1.01);
+    }
+
+    .card:hover::after { animation: shimmer 900ms ease; }
+
+    .card.active {
+      border-color: rgba(255, 126, 179, 0.72);
+      box-shadow: 0 18px 45px rgba(255, 169, 213, 0.28);
+      transform: translateY(-2px);
+    }
+
+    .detail-panel {
+      margin-top: 18px;
+      padding: 16px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 240, 248, 0.98));
+      border: 1px solid rgba(255, 151, 204, 0.35);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      transition: transform 240ms ease, box-shadow 240ms ease;
+    }
+
+    .detail-panel.pop {
+      animation: popIn 320ms cubic-bezier(0.15, 1, 0.3, 1);
+      box-shadow: 0 18px 42px rgba(255, 184, 221, 0.28);
+    }
+
+    .detail-panel h3 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+    }
+
+    .detail-panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.98rem;
+    }
+
+    .detail-hint {
+      font-size: 0.9rem;
+      color: #ffd8ef;
+      margin-bottom: 8px;
+    }
+
+    .relations {
+      margin-top: 18px;
+      padding: 16px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 239, 247, 0.97));
+      border: 1px solid rgba(255, 185, 224, 0.28);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .relations h2 {
+      margin: 0 0 6px;
+      font-size: 1.1rem;
+    }
+
+    .relations p {
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 0 0 12px;
+      font-size: 0.98rem;
+    }
+
+    .relation-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .relation-tab {
+      border: 1px solid rgba(244, 114, 182, 0.25);
+      background: rgba(17, 24, 39, 0.78);
+      color: #fff;
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 160ms ease;
+    }
+
+    .relation-tab:hover,
+    .relation-tab.active {
+      background: rgba(244, 114, 182, 0.18);
+      border-color: rgba(244, 114, 182, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .relation-panel {
+      display: none;
+      animation: fadeUp 260ms ease;
+    }
+
+    .relation-panel.active {
+      display: block;
+    }
+
+    .relation-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .relation-card {
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(148, 163, 184, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .relation-card strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 1rem;
+    }
+
+    .relation-card span {
+      color: #ffd8ef;
+      font-size: 0.88rem;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .relation-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.45;
+    }
+
+    .member-portrait-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .member-portrait-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 240, 248, 0.95));
+      border: 1px solid rgba(255, 181, 218, 0.28);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 24px rgba(255, 184, 221, 0.16);
+      cursor: pointer;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .member-portrait-card:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: rgba(244, 114, 182, 0.45);
+      box-shadow: 0 16px 28px rgba(244, 114, 182, 0.14);
+    }
+
+    .member-portrait-card.active {
+      border-color: rgba(244, 114, 182, 0.65);
+      box-shadow: 0 18px 32px rgba(244, 114, 182, 0.18);
+    }
+
+    .member-portrait-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .member-portrait-card h3 {
+      margin: 10px 10px 4px;
+      font-size: 1rem;
+    }
+
+    .member-portrait-card p {
+      margin: 0 10px 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 14px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .card h2 {
+      font-size: 1rem;
+      margin: 0 0 6px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .mood-toggle {
+      margin-top: 14px;
+      border: 1px solid rgba(255, 150, 202, 0.42);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #6b3d61;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 160ms ease, background 160ms ease;
+    }
+
+    .mood-toggle:hover { transform: translateY(-1px); background: rgba(255, 247, 251, 0.98); }
+
+    body.soft-mode {
+      --bg: linear-gradient(135deg, #fff2f9 0%, #ffe0ef 45%, #ffd9f2 100%);
+      --card: rgba(255, 255, 255, 0.82);
+      --card-strong: rgba(255, 247, 251, 0.95);
+    }
+
+    @keyframes revealUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      100% { transform: translateX(120%); }
+    }
+
+    @keyframes pulseGlow {
+      from { opacity: 0.45; transform: scale(1); }
+      to { opacity: 0.8; transform: scale(1.04); }
+    }
+
+    @keyframes popIn {
+      0% { transform: translateY(8px) scale(0.98); opacity: 0.7; }
+      60% { transform: translateY(-2px) scale(1.01); opacity: 1; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; }
+      .photo-main { min-height: 280px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .page { padding: 18px 12px 30px; }
+      .stats { grid-template-columns: 1fr; }
+      .gallery { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <article class="panel intro">
+        <div>
+          <span class="eyebrow">Akiyama Mizuki</span>
+          <h1>아키야마 미즈키를 소개합니다</h1>
+          <p class="lead">아키야마 미즈키는 모바일 게임 <strong>프로젝트 세카이: 컬러풀 스테이지!</strong>의 등장인물로, 소속은 <strong>25시, 나이트코드에서.</strong>이며 닉네임은 <strong>Amia</strong>입니다. 이 캐릭터는 귀여운 이미지와 섬세한 감성, 그리고 서클 멤버들과의 깊은 관계 속에서 특별한 존재감을 드러냅니다. 미즈키는 단순한 캐릭터 소개를 넘어, 감정과 분위기, 시각적인 매력을 함께 느낄 수 있도록 구성된 인물입니다.</p>
+          <div class="chips">
+            <span class="chip">부드러운 분위기</span>
+            <span class="chip">사진 중심 소개</span>
+            <span class="chip">감성적인 인상</span>
+            <span class="chip">클릭하면 더 자세한 설명</span>
+          </div>
+          <button class="mood-toggle" type="button" aria-label="감성 모드 전환">감성 모드 전환</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong>25시, 나이트코드에서.</strong><span>소속 그룹과 활동 무대</span></div>
+          <div class="stat"><strong>Amia</strong><span>닉네임과 팬들 사이의 별칭</span></div>
+          <div class="stat"><strong>영상 담당</strong><span>음악과 영상 제작을 맡는 역할</span></div>
+        </div>
+      </article>
+
+      <article class="panel photo-main">
+        <img src="Images/0dbe5771-5264-40b3-86bd-851e01c27f9c.webp" alt="아키야마 미즈키의 포토 메인 이미지" />
+        <div class="photo-tag">이 메인 사진은 미즈키의 부드럽고 감성적인 분위기를 한눈에 보여주는 대표 이미지입니다.</div>
+      </article>
+    </section>
+
+    <section class="gallery">
+      <article class="card" data-title="프로필 요약" data-detail="아키야마 미즈키는 프로젝트 세카이의 대표 캐릭터 중 하나로, 귀여움과 감성, 그리고 서클 안에서의 섬세한 관계 설정으로 많은 팬들에게 사랑받고 있습니다. 이 카드에서는 미즈키가 왜 특별한 존재인지, 그리고 어떤 매력으로 주목받는지 한눈에 볼 수 있습니다.">
+        <h2>프로필 요약</h2>
+        <p>아키야마 미즈키는 프로젝트 세카이의 대표 캐릭터 중 하나로, 귀여움과 감성, 그리고 서클 안에서의 섬세한 관계 설정으로 많은 팬들에게 사랑받고 있습니다.</p>
+      </article>
+      <article class="card" data-title="역할" data-detail="소속은 25시, 나이트코드에서.이며, 영상 담당으로 활동합니다. 음악과 영상 제작을 통해 서클의 분위기를 만들어가고, 멤버들 사이에서 감성적인 연결고리 역할을 하는 인물입니다. 이 역할은 미즈키의 개성과 서클 전체의 분위기를 한층 더 살아있게 만듭니다.">
+        <h2>역할</h2>
+        <p>소속은 25시, 나이트코드에서.이며, 영상 담당으로 활동하며 음악과 영상 제작을 통해 서클의 분위기를 만들어가는 중요한 인물입니다.</p>
+      </article>
+      <article class="card" data-title="성격" data-detail="귀여운 것과 감각적인 표현을 좋아하고, 서클 멤버들 사이에서 따뜻하고 다정한 분위기를 이끌어내는 면이 두드러집니다. 미즈키의 성격은 부드러움과 친근함이 함께 어우러져, 단순한 캐릭터 소개 이상의 감정선을 전달해 줍니다.">
+        <h2>성격</h2>
+        <p>귀여운 것과 감각적인 표현을 좋아하고, 서클 멤버들 사이에서 따뜻하고 다정한 분위기를 이끌어내는 면이 두드러집니다.</p>
+      </article>
+      <article class="card" data-title="참고 정보" data-detail="한국어로도 많이 검색되는 인물이며, 등장인물 설정과 스토리, 음악, 영상 연출이 함께 조화를 이루는 캐릭터입니다. 이 항목은 미즈키를 더 깊이 이해하고 싶을 때 참고할 수 있는 설명을 담고 있으며, 팬덤과 작품 분위기를 함께 느끼게 합니다.">
+        <h2>참고 정보</h2>
+        <p>한국어로도 많이 검색되는 인물이며, 등장인물 설정과 스토리, 음악, 영상 연출이 함께 조화를 이루는 캐릭터입니다.</p>
+      </article>
+    </section>
+
+    <section class="detail-panel" aria-live="polite">
+      <div class="detail-hint">카드를 클릭하면 세부 정보를 확인할 수 있어요.</div>
+      <h3 id="detailTitle">프로필 요약</h3>
+      <p id="detailText">아키야마 미즈키는 프로젝트 세카이의 대표 캐릭터 중 하나로, 귀여움과 감성, 그리고 서클 안에서의 섬세한 관계 설정으로 많은 팬들에게 사랑받고 있습니다.</p>
+    </section>
+
+    <section class="relations" aria-label="다른 멤버들과의 관계">
+      <h2>다른 멤버들과의 관계</h2>
+      <p>미즈키는 서클 안에서 단순한 캐릭터를 넘어, 다른 멤버들과의 분위기와 감정선을 통해 더 깊은 인상을 남기는 존재입니다.</p>
+      <div class="relation-tabs" role="tablist" aria-label="관계 보기">
+        <button class="relation-tab active" type="button" data-target="r-friend">친근한 관계</button>
+        <button class="relation-tab" type="button" data-target="r-team">서클의 분위기</button>
+        <button class="relation-tab" type="button" data-target="r-growth">성장과 연결</button>
+      </div>
+
+      <article class="relation-panel active" id="r-friend">
+        <div class="relation-grid">
+          <div class="relation-card"><strong>멤버들과의 친근함</strong><span>부드러운 교류</span><p>미즈키는 주변 사람들과의 대화와 동행을 통해 따뜻한 분위기를 만들며, 서클 전체를 편안하게 이끄는 존재입니다.</p></div>
+          <div class="relation-card"><strong>감정적 연결</strong><span>서정적인 매력</span><p>감수성이 풍부한 성격 덕분에 멤버들의 감정선과 조화를 이루며, 서로를 이해하는 데 큰 역할을 합니다.</p></div>
+        </div>
+      </article>
+
+      <article class="relation-panel" id="r-team">
+        <div class="relation-grid">
+          <div class="relation-card"><strong>서클의 중심</strong><span>분위기 메이커</span><p>미즈키는 멤버들의 색감과 에너지를 자연스럽게 이어 주어, 서클의 전체적인 분위기를 한층 더 따뜻하고 매력적으로 만듭니다.</p></div>
+          <div class="relation-card"><strong>협업의 조율</strong><span>팀워크의 핵심</span><p>각 멤버의 개성을 존중하면서도 서로를 연결해 주는 점에서, 협업과 함께하는 관계의 핵심 인물로 보입니다.</p></div>
+        </div>
+      </article>
+
+      <article class="relation-panel" id="r-growth">
+        <div class="relation-grid">
+          <div class="relation-card"><strong>성장의 영향</strong><span>발전의 동력</span><p>다른 멤버들과의 교류를 통해 미즈키도 더 깊은 감정과 안정감을 배우며, 관계 안에서 성장하는 캐릭터로 느껴집니다.</p></div>
+          <div class="relation-card"><strong>서사적 여운</strong><span>기억에 남는 존재</span><p>상호작용 속에서 드러나는 미즈키의 섬세한 태도는, 단순한 캐릭터 소개를 넘어 서사적인 여운을 남깁니다.</p></div>
+        </div>
+      </article>
+
+      <div class="member-portrait-grid">
+        <article class="member-portrait-card" data-member="미즈키" data-detail="미즈키는 자신의 감성적인 분위기와 부드러운 태도로 서클 내에서 가장 따뜻한 존재감을 드러냅니다. 이 관계는 친근함과 안정감이 함께 느껴지는 핵심적인 연결입니다.">
+          <img src="Images/미즈키.webp" alt="아키야마 미즈키의 실제 이미지" />
+          <h3>미즈키</h3>
+          <p>부드럽고 감성적인 분위기를 대표하는 미즈키의 모습입니다.</p>
+        </article>
+        <article class="member-portrait-card" data-member="마후유" data-detail="마후유와의 관계는 미즈키의 서정적인 면과 감정의 깊이를 더욱 살아 있게 만드는 조합입니다. 서로의 분위기가 어우러져 잔잔한 여운을 남깁니다.">
+          <img src="Images/마후유.webp" alt="마후유의 실제 이미지" />
+          <h3>마후유</h3>
+          <p>미즈키와 함께하는 서정적인 분위기와 감정선을 느낄 수 있는 멤버입니다.</p>
+        </article>
+        <article class="member-portrait-card" data-member="에나" data-detail="에나와의 관계는 미즈키의 부드러움과 에나의 독특한 매력이 균형을 이루는 관계입니다. 서로 다른 색감이 만나 더욱 다채로운 분위기를 만들어 냅니다.">
+          <img src="Images/에나.webp" alt="에나의 실제 이미지" />
+          <h3>에나</h3>
+          <p>상대적으로 화려하고 독특한 분위기를 가진 멤버로, 미즈키의 관계성에 깊이를 더합니다.</p>
+        </article>
+        <article class="member-portrait-card" data-member="카나데" data-detail="카나데와의 관계는 차분하고 섬세한 감성 덕분에 미즈키의 따뜻한 면과 잘 어울립니다. 균형 잡힌 분위기 속에서 서로를 보완하는 관계입니다.">
+          <img src="Images/카나데.webp" alt="카나데의 실제 이미지" />
+          <h3>카나데</h3>
+          <p>차분하고 섬세한 인상을 주는 카나데와 함께 미즈키의 서클 분위기가 살아납니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="gallery">
+      <article class="card">
+        <img src="Images/4-7Ak4Mz7yd_r2HL-1e5YFIttD_ICfxjb0LEiyrV6n1AUuEB2ZlxR9BoOTjEMcXKXaCBoUffPbw35WykE7ZPBQ.webp" alt="미즈키의 첫인상 사진" />
+        <h2>첫인상</h2>
+        <p>이 사진은 미즈키가 처음 보여주는 부드럽고 따뜻한 인상을 담고 있습니다. 색감과 표정에서 느껴지는 편안함이, 캐릭터의 친근한 매력을 잘 드러냅니다.</p>
+      </article>
+      <article class="card">
+        <img src="Images/AUk3odhygf-rPz4Fn9p0jKQS56bNGjL1kyoQinWTm4SLnJfF9biiJMtJfUljcnKAFD-tJldMuCT4gj47CJIEMw.webp" alt="미즈키의 감성적인 분위기 사진" />
+        <h2>감성적인 분위기</h2>
+        <p>이 사진은 미즈키의 세련된 스타일과 은은한 감정을 함께 담고 있습니다. 조명과 배경이 만드는 분위기는 캐릭터의 몽환적인 매력을 더 깊게 느끼게 합니다.</p>
+      </article>
+      <article class="card">
+        <img src="Images/FQQeWF6Nr9CNflIpndxIvlrYnAkMLwbLuVl9bYhsGWD19EmHL00CAbmzCjwCfhtuJ4DeCw3ksXauX4uYA9BdBA.webp" alt="미즈키의 활기찬 모습 사진" />
+        <h2>밝고 생기 있는 매력</h2>
+        <p>이 장면은 미즈키의 밝은 에너지와 친근한 인상을 보여 줍니다. 활기찬 표정과 색감은 캐릭터의 생동감과 시선을 끌어당기는 매력을 한층 더 강조합니다.</p>
+      </article>
+      <article class="card">
+        <img src="Images/images.jpg" alt="미즈키의 전체적인 소개 이미지" />
+        <h2>소개의 핵심</h2>
+        <p>이 카드에서는 미즈키를 한마디로 표현하면 귀여움과 감성, 그리고 서클 안의 특별한 연결감을 가진 인물이라는 점을 알 수 있습니다. 전체 소개 페이지의 결론을 담고 있는 핵심 설명입니다.</p>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const moodToggle = document.querySelector('.mood-toggle');
+    if (moodToggle) {
+      moodToggle.addEventListener('click', () => {
+        document.body.classList.toggle('soft-mode');
+        moodToggle.textContent = document.body.classList.contains('soft-mode')
+          ? '기본 모드로 돌아가기'
+          : '감성 모드 전환';
+      });
+    }
+
+    const detailTitle = document.getElementById('detailTitle');
+    const detailText = document.getElementById('detailText');
+    const cards = document.querySelectorAll('.card');
+    const portraitCards = document.querySelectorAll('.member-portrait-card');
+
+    function updateDetail(card) {
+      detailTitle.textContent = card.dataset.title || '세부 정보';
+      detailText.textContent = card.dataset.detail || '클릭한 항목에 대한 설명이 여기에 표시됩니다.';
+      cards.forEach((item) => item.classList.toggle('active', item === card));
+      const detailPanel = document.querySelector('.detail-panel');
+      detailPanel.classList.remove('pop');
+      void detailPanel.offsetWidth;
+      detailPanel.classList.add('pop');
+    }
+
+    const detailPanel = document.querySelector('.detail-panel');
+    const relationTabs = document.querySelectorAll('.relation-tab');
+    const relationPanels = document.querySelectorAll('.relation-panel');
+
+    function showMemberDetail(card) {
+      detailTitle.textContent = `${card.dataset.member}와의 관계`;
+      detailText.textContent = card.dataset.detail || '클릭한 멤버와의 관계 설명이 여기에 표시됩니다.';
+      portraitCards.forEach((item) => item.classList.toggle('active', item === card));
+      detailPanel.classList.remove('pop');
+      void detailPanel.offsetWidth;
+      detailPanel.classList.add('pop');
+    }
+
+    relationTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        relationTabs.forEach((item) => item.classList.remove('active'));
+        relationPanels.forEach((panel) => panel.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.target).classList.add('active');
+      });
+    });
+
+    portraitCards.forEach((card) => {
+      card.addEventListener('click', () => showMemberDetail(card));
+    });
+
+    cards.forEach((card, index) => {
+      card.style.animationDelay = `${index * 70}ms`;
+      card.addEventListener('click', () => updateDetail(card));
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        if (!card.classList.contains('active')) {
+          card.style.transform = `perspective(900px) rotateX(${(-py * 6).toFixed(2)}deg) rotateY(${(px * 8).toFixed(2)}deg) translateY(-4px) scale(1.01)`;
+        }
+      });
+      card.addEventListener('mouseleave', () => {
+        if (!card.classList.contains('active')) {
+          card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)';
+        }
+      });
+    });
+
+    const photoMain = document.querySelector('.photo-main');
+    if (photoMain) {
+      photoMain.addEventListener('mousemove', (e) => {
+        const rect = photoMain.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        const img = photoMain.querySelector('img');
+        if (img) {
+          img.style.transform = `translate3d(${x * 8}px, ${y * 8}px, 0) scale(1.03)`;
+        }
+      });
+      photoMain.addEventListener('mouseleave', () => {
+        const img = photoMain.querySelector('img');
+        if (img) img.style.transform = 'translate3d(0, 0, 0) scale(1)';
+      });
+    }
+
+    updateDetail(cards[0]);
+  </script>
+</body>
+</html>
